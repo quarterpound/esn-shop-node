@@ -1,9 +1,9 @@
 const express = require("express");
 const Database = require("../helpers/Database");
+const jwtCheck = require("../middlewares/Jwt");
 const Item = require("../classes/Item");
 
 class ItemController {
-    router;
     path = "/items";
 
     constructor() {
@@ -12,8 +12,8 @@ class ItemController {
     }
 
     initRoutes() {
-        this.router.delete("/:id", this.deleteOne);
-        this.router.post("/", this.createItem);
+        this.router.delete("/:id", jwtCheck, this.deleteOne);
+        this.router.post("/", jwtCheck, this.createItem);
         this.router.get("/", this.getAll);
         this.router.get("/:id", this.getOne);
     }
@@ -34,32 +34,38 @@ class ItemController {
     }
 
     async createItem(req, res) {
-        const item = new Item(req.body);
-        if(!item.getErrors()) {
-            const result = await Database.db.collection("items").insertOne(item.json());
-            if (result.insertedCount > 0) {
-                return res.sendStatus(201);
+        if(req.tokenData && ['webmaster', 'editor'].includes(req.tokenData.type)) {
+            const item = new Item(req.body);
+            if(!item.getErrors()) {
+                const result = await Database.db.collection("items").insertOne(item.json());
+                if (result.insertedCount > 0) {
+                    return res.sendStatus(201);
+                }
+                return res.sendStatus(500);
             }
-            return res.sendStatus(500);
+            return res.sendStatus(400);
         }
-        return res.sendStatus(400);
+        return res.sendStatus(401);
     }
 
     async deleteOne(req, res) {
-        if(req.params.id) {
-            const t = await Database.db.collection("items").removeOne({id: req.params.id});
-            if(t.result.n === 0) {
-                return res.sendStatus(404);
+        if(req.tokenData && ['webmaster', 'editor'].includes(req.tokenData.type)) {
+            if(req.params.id) {
+                const t = await Database.db.collection("items").removeOne({id: req.params.id});
+                if(t.result.n === 0) {
+                    return res.sendStatus(404);
+                }
+    
+                if(t.deletedCount < 1) {
+                    return res.sendStatus(500);
+                }
+    
+                return res.sendStatus(200);
             }
-
-            if(t.deletedCount < 1) {
-                return res.sendStatus(500);
-            }
-
-            return res.sendStatus(200);
+    
+            return res.sendStatus(400);
         }
-
-        return res.sendStatus(400);
+        return res.sendStatus(401);
     }
 }
 

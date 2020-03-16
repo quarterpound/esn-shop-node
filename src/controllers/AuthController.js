@@ -1,13 +1,11 @@
 const express = require("express");
 const validator = require("validate.js");
 const bcrypt = require("bcryptjs");
-const jwtMiddleware = require('express-jwt-middleware');
-var jwtCheck = jwtMiddleware(process.env.JWT_SECRET);
+const jwtCheck = require("../middlewares/Jwt");
 const Database = require("../helpers/Database");
 const User = require("../classes/User");
 
 class AuthController {
-    router;
     path = "/auth";
 
     constructor() {
