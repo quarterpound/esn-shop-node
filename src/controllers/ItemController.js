@@ -19,7 +19,7 @@ class ItemController {
     }
 
     async getAll(req, res) {
-        const t = await Database.db.collection("items").find().toArray();
+        const t = await Database.db.collection("items").find({}).toArray();
         res.json(t)
     }
 

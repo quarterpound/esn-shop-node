@@ -47,9 +47,6 @@ class Item {
                 maximum: 200,
             }
         },
-        details: {
-            presence: true,
-        },
         price: {
             presence: true,
             numericality: {
@@ -74,6 +71,7 @@ class Item {
     
 
     json() {
+        delete this.constraits;
         return this;
     }
 }

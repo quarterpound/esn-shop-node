@@ -1,11 +1,10 @@
 const express = require("express");
 
 class Server {
-    app;
-    port;
-
+    
     constructor(appInit) {
         this.app = express();
+        this.app.disable('x-powered-by')
         this.port = appInit.port;
 
         this.middleWares(appInit.middleWares);
