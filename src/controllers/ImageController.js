@@ -9,7 +9,7 @@ const upload = multer({dest: path.join(__dirname, '../../uploads'), limits: {fil
     if(allowdTypes.includes(file.mimetype)) {
         return cb(null, true);
     }
-    cb(new Error("These files are not supported"))
+    cb("These files are not supported")
 }});
 
 class ImageController {
@@ -49,7 +49,7 @@ class ImageController {
     
                 const result = await Database.db.collection("images").insertMany(images);
                 if(result.insertedCount === images.length) {
-                    return res.send(201).json(images.map(img => {return img.id}));
+                    return res.status(201).json(images.map(img => {return img.id}));
                 }
     
                 return res.status(500).json(images.map(img => {return img.id}))

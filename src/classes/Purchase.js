@@ -11,11 +11,13 @@ class Purchase {
         this.ip = body.ip;
         this.phoneNumber = body.phoneNumber;
         this.items = body.items;
+        this.isOpen = true;
         this.createdAt = new Date();
     }
 
     getErrors = () => {
         const purchaseCheck = validator(this, this.constPurchase);
+		console.log(purchaseCheck);
         if(purchaseCheck) return purchaseCheck;
         this.items.forEach(item => {
             const itemCheck = validator(item, this.constItem);
@@ -54,7 +56,6 @@ class Purchase {
             email: true,
         },
         allowEmailSub: {
-            presence: true,
             type: 'boolean',
         },
         phoneNumber: {

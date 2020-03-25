@@ -14,18 +14,29 @@ class ItemController {
     initRoutes() {
         this.router.delete("/:id", jwtCheck, this.deleteOne);
         this.router.post("/", jwtCheck, this.createItem);
-        this.router.get("/", this.getAll);
-        this.router.get("/:id", this.getOne);
+        this.router.get("/", jwtCheck, this.getAll);
+        this.router.get("/:id", jwtCheck, this.getOne);
     }
 
     async getAll(req, res) {
-        const t = await Database.db.collection("items").find({}).toArray();
+		let searchParams = {quantity:{$gt: 0}}
+		if(req.tokenData && ['webmaster', 'editor'].includes(req.tokenData.type)) {
+			searchParams = {};
+		}
+        const t = await Database.db.collection("items").find(searchParams).toArray();
         res.json(t)
     }
 
     async getOne(req, res) {
+		
+		let searchParams = {id: req.params.id, quantity:{$gt: 0}}
+		
+		if(req.tokenData && ['webmaster', 'editor'].includes(req.tokenData.type)) {
+			searchParams = {id: req.params.id};
+		}
+		
         if(req.params.id) {
-            const t = await Database.db.collection("items").findOne({id: req.params.id});
+            const t = await Database.db.collection("items").findOne(searchParams);
            if(t) {
                return res.json(t);
            }
@@ -39,7 +50,7 @@ class ItemController {
             if(!item.getErrors()) {
                 const result = await Database.db.collection("items").insertOne(item.json());
                 if (result.insertedCount > 0) {
-                    return res.sendStatus(201);
+                    return res.status(201).send(item.json());
                 }
                 return res.sendStatus(500);
             }

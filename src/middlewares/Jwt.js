@@ -8,8 +8,7 @@ const clearToken = (token) => {
 };
 
 const middleWareFunc = async (req, res, next) => {
-    const token = clearToken(req.headers.authorization);
-
+    const token = clearToken(req.headers.authorization); 
     if(token) {
         try {
             const decoded = await jwt.verify(token, process.env.JWT_SECRET);
