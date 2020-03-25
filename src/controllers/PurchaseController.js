@@ -16,7 +16,7 @@ class PurchaseController {
     }
 
     initRoutes() {
-		this.router.put("/:id", jwtCheck, this.closeOrder);
+		this.router.put("/:id/close", jwtCheck, this.closeOrder);
         this.router.get("/", jwtCheck, this.getAll);
         this.router.post("/", this.makePurchase);
         this.router.get("/:id", jwtCheck, this.getOne);
@@ -74,8 +74,20 @@ class PurchaseController {
     }
 	
 	closeOrder = async (req, res) => {
-        console.log(req.tokenData);
-        return res.send(req.tokenData)
+        if(req.tokenData && ['webmaster', 'editor'].includes(req.tokenData.type)) {
+            if(req.params.id) {
+                const t = await Database.db.collection("purchases").updateOne({id: req.params.id, isOpen: true}, {$set: {isOpen: false}});
+                if(t.matchedCount > 0) {
+                    if(t.modifiedCount > 0) {
+                        return res.sendStatus(201);
+                    }
+                    return res.sendStatus(500);
+                 }
+                return res.sendStatus(404);
+            }
+            return res.sendStatus(400);
+        }
+        return res.status(401)
     }
 
     async removeOne(req, res) {
