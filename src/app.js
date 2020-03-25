@@ -19,8 +19,8 @@ const app = new Server({
         bodyParser.urlencoded({extended: true}),
         bodyParser.json(),
         cors(),
-		morgan('dev'),
-        //morgan('common', {stream: fs.createWriteStream('./access.log', {flags: 'a'})}),
+		// morgan('dev'),
+        morgan('common', {stream: fs.createWriteStream('./access.log', {flags: 'a'})}),
     ],
     routes: [
         new PurchaseController(),
