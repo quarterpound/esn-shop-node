@@ -1,4 +1,5 @@
 const express = require("express");
+const https = require("https");
 
 class Server {
     
@@ -6,10 +7,13 @@ class Server {
         this.app = express();
         this.app.disable('x-powered-by')
         this.port = appInit.port;
-
+        this.secure = appInit.securePort;
+        this.privateKey = appInit.privateKey;	
+        this.cert = appInit.certificate;
         this.middleWares(appInit.middleWares);
         this.routes(appInit.routes);
 
+        this.httpsServer = https.createServer({key: this.privateKey, cert: this.cert}, this.app);
     }
 
     middleWares(middleWares) {
@@ -28,6 +32,8 @@ class Server {
         this.app.listen(this.port, () => {
             console.log(`App listening on the http://localhost:${this.port}`);
         })
+
+        this.httpsServer.listen(this.secure, () => {console.log(`App listening on the https://localhost:${this.secure}`)});
     }
 }
 
