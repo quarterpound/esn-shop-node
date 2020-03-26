@@ -2,6 +2,7 @@ const Server = require("./server");
 const morgan = require("morgan");
 const fs = require("fs");
 const cors = require("cors");
+const path = require("path");
 require('dotenv').config()
 const bodyParser = require("body-parser");
 const ItemController = require("./controllers/ItemController");
@@ -15,6 +16,9 @@ const DBConnection = new Database(`mongodb+srv://${process.env.DB_USER}:${proces
 
 const app = new Server({
     port: process.env.PORT,
+securePort: process.env.SECURE_PORT,
+privateKey: fs.readFileSync(path.join(__dirname, "../privkey.pem")),
+certificate: fs.readFileSync(path.join(__dirname, "../cert.pem")),
     middleWares: [
         bodyParser.urlencoded({extended: true}),
         bodyParser.json(),

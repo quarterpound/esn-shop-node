@@ -3,3 +3,7 @@ node_modules
 uploads
 .env
 access.log
+privkey.pem
+cert.pem
+src/server.js
+
