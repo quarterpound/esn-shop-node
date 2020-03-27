@@ -11,7 +11,6 @@ class Item {
         this.options = body.options;
         this.description = body.description;
         this.details = body.details;
-		this.isOpen = true,
         this.price = parseFloat(body.price);
         this.category = body.category.toLowerCase().split(" ").join("-");
         this.quantity = parseInt(body.quantity);

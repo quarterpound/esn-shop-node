@@ -21,7 +21,7 @@ class UserController {
 
     async getAll(req, res) {
         if(req.tokenData && req.tokenData.type === 'webmaster') {
-            const t = await Database.db.collections("users").find({}).toArray();
+            const t = await Database.db.collection("users").find({}).toArray();
             return res.json(t);
         }
         return res.sendStatus(401);

@@ -23,7 +23,7 @@ certificate: fs.readFileSync(path.join(__dirname, "../cert.pem")),
         bodyParser.urlencoded({extended: true}),
         bodyParser.json(),
         cors(),
-		// morgan('dev'),
+		//  morgan('dev'),
         morgan('common', {stream: fs.createWriteStream('./access.log', {flags: 'a'})}),
     ],
     routes: [
